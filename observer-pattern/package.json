@@ -1,0 +1,14 @@
+{
+  "name": "observer-pattern",
+  "version": "1.0.0",
+  "description": "Weather Station Observer Pattern",
+  "main": "index.ts",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  }
+}

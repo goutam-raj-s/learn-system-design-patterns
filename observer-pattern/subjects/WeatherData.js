@@ -49,3 +49,4 @@ export class WeatherData extends Subject {
     return this.pressure;
   }
 }
+
