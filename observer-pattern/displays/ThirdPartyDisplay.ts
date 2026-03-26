@@ -1,17 +1,17 @@
 import { Observer } from '../types/interfaces/Observer';
 import { DisplayElement } from '../types/interfaces/DisplayElement';
-import { Subject } from '../types/interfaces/Subject';
+import { WeatherData } from '../subjects/WeatherData';
 
 export class ThirdPartyDisplay implements Observer, DisplayElement {
-  private weatherData: Subject;
+  private weatherData: WeatherData;
 
-  constructor(weatherData: Subject) {
+  constructor(weatherData: WeatherData) {
     this.weatherData = weatherData;
-    this.weatherData.registerObserver(this);
+    this.weatherData.on('update', this.update.bind(this));
   }
 
-  public update(temp: number, humidity: number, pressure: number): void {
-    // Implement custom third party logic here reacting directly to dispatch.
+  public update(): void {
+    // Custom third party logic interacting with this.weatherData 
     this.display();
   }
 

@@ -1,37 +1,33 @@
-import { Subject } from '../types/interfaces/Subject';
-import { Observer } from '../types/interfaces/Observer';
+import { EventEmitter } from 'events';
 
-export class WeatherData implements Subject {
-  private observers: Observer[];
+export class WeatherData extends EventEmitter {
   private temperature: number;
   private humidity: number;
   private pressure: number;
+  private changed: boolean;
 
   constructor() {
-    this.observers = [];
+    super();
     this.temperature = 0;
     this.humidity = 0;
     this.pressure = 0;
+    this.changed = false;
   }
 
-  public registerObserver(o: Observer): void {
-    this.observers.push(o);
-  }
-
-  public removeObserver(o: Observer): void {
-    const i = this.observers.indexOf(o);
-    if (i >= 0) {
-      this.observers.splice(i, 1);
-    }
+  protected setChanged(): void {
+    this.changed = true;
   }
 
   public notifyObservers(): void {
-    for (const observer of this.observers) {
-      observer.update(this.temperature, this.humidity, this.pressure);
+    if (this.changed) {
+      // PULL Model: We emit the 'update' event. Node's EventEmitter handles the list of listeners natively!
+      this.emit('update');
+      this.changed = false;
     }
   }
 
   public measurementsChanged(): void {
+    this.setChanged();
     this.notifyObservers();
   }
 
@@ -43,14 +39,15 @@ export class WeatherData implements Subject {
   }
 
   public getTemperature(): number {
-    return this.temperature;
+    return this.temperature; // Observers will PULL this
   }
 
   public getHumidity(): number {
-    return this.humidity;
+    return this.humidity; // Observers will PULL this
   }
 
   public getPressure(): number {
-    return this.pressure;
+    return this.pressure; // Observers will PULL this
   }
 }
+

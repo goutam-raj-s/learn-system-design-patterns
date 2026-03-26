@@ -1,22 +1,23 @@
 import { Observer } from '../types/interfaces/Observer';
 import { DisplayElement } from '../types/interfaces/DisplayElement';
-import { Subject } from '../types/interfaces/Subject';
+import { WeatherData } from '../subjects/WeatherData';
 
 export class CurrentConditionsDisplay implements Observer, DisplayElement {
   private temperature: number;
   private humidity: number;
-  private weatherData: Subject;
+  private weatherData: WeatherData;
 
-  constructor(weatherData: Subject) {
+  constructor(weatherData: WeatherData) {
     this.temperature = 0;
     this.humidity = 0;
     this.weatherData = weatherData;
-    this.weatherData.registerObserver(this);
+    this.weatherData.on('update', this.update.bind(this));
   }
 
-  public update(temperature: number, humidity: number, pressure: number): void {
-    this.temperature = temperature;
-    this.humidity = humidity;
+  public update(): void {
+    // PULL model: taking the exact values needed from the passed reference
+    this.temperature = this.weatherData.getTemperature();
+    this.humidity = this.weatherData.getHumidity();
     this.display();
   }
 
@@ -24,3 +25,4 @@ export class CurrentConditionsDisplay implements Observer, DisplayElement {
     console.log(`Current conditions: ${this.temperature}F degrees and ${this.humidity}% humidity`);
   }
 }
+

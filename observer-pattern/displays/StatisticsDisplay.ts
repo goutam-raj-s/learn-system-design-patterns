@@ -1,24 +1,26 @@
 import { Observer } from '../types/interfaces/Observer';
 import { DisplayElement } from '../types/interfaces/DisplayElement';
-import { Subject } from '../types/interfaces/Subject';
+import { WeatherData } from '../subjects/WeatherData';
 
 export class StatisticsDisplay implements Observer, DisplayElement {
   private maxTemp: number;
   private minTemp: number;
   private tempSum: number;
   private numReadings: number;
-  private weatherData: Subject;
+  private weatherData: WeatherData;
 
-  constructor(weatherData: Subject) {
+  constructor(weatherData: WeatherData) {
     this.maxTemp = 0.0;
     this.minTemp = 200;
     this.tempSum = 0.0;
     this.numReadings = 0;
     this.weatherData = weatherData;
-    this.weatherData.registerObserver(this);
+    this.weatherData.on('update', this.update.bind(this));
   }
 
-  public update(temp: number, humidity: number, pressure: number): void {
+  public update(): void {
+    // PULL model
+    const temp = this.weatherData.getTemperature();
     this.tempSum += temp;
     this.numReadings++;
     if (temp > this.maxTemp) {
@@ -34,3 +36,4 @@ export class StatisticsDisplay implements Observer, DisplayElement {
     console.log(`Avg/Max/Min temperature = ${(this.tempSum / this.numReadings).toFixed(1)}/${this.maxTemp}/${this.minTemp}`);
   }
 }
+

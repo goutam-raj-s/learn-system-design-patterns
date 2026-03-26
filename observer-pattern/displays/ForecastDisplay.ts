@@ -1,22 +1,23 @@
 import { Observer } from '../types/interfaces/Observer';
 import { DisplayElement } from '../types/interfaces/DisplayElement';
-import { Subject } from '../types/interfaces/Subject';
+import { WeatherData } from '../subjects/WeatherData';
 
 export class ForecastDisplay implements Observer, DisplayElement {
   private currentPressure: number;
   private lastPressure: number;
-  private weatherData: Subject;
+  private weatherData: WeatherData;
 
-  constructor(weatherData: Subject) {
+  constructor(weatherData: WeatherData) {
     this.currentPressure = 29.92;
     this.lastPressure = 0;
     this.weatherData = weatherData;
-    this.weatherData.registerObserver(this);
+    this.weatherData.on('update', this.update.bind(this));
   }
 
-  public update(temp: number, humidity: number, pressure: number): void {
+  public update(): void {
+    // PULL model
     this.lastPressure = this.currentPressure;
-    this.currentPressure = pressure;
+    this.currentPressure = this.weatherData.getPressure();
     this.display();
   }
 
